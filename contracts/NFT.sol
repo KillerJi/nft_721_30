@@ -3,23 +3,26 @@ pragma solidity ^0.8.0;
 
 import "./ERC721.sol";
 import "./Ownable.sol";
-import "./nft/Counters.sol";
+import "./interface/Counters.sol";
 
 contract NFT is ERC721, Ownable {
     using Counters for Counters.Counter;
     using Strings for uint256;
     string public baseExtension = ".json";
     string public baseURI;
-    string _initBaseURI = "http://files.boicehot.com/youyi/";
+    string _initBaseURI = "https://metadata.x-protocol.com/xma/";
     uint256 public constant total = 30;
     Counters.Counter private currentTokenId;
     mapping(uint256 => string) private _tokenURIs;
 
     constructor() ERC721("X-Metaverse Avatar", "XMA") {
         setBaseURI(_initBaseURI);
+        for (uint256 i = 0; i < 30; i++) {
+            _mint(msg.sender);
+        }
     }
 
-    function mint(address recipient) public onlyOwner returns (uint256) {
+    function _mint(address recipient) internal onlyOwner returns (uint256) {
         currentTokenId.increment();
         require(total >= currentTokenId._value, "Exceed the levy limit");
         uint256 newItemId = currentTokenId.current();
@@ -39,11 +42,7 @@ contract NFT is ERC721, Ownable {
 
     function _checkNftOwner(uint256 tokenId) internal view returns (bool) {
         address owner = ERC721.ownerOf(tokenId);
-        if (owner == msg.sender) {
-            return true;
-        } else {
-            return false;
-        }
+        return owner == msg.sender;
     }
 
     function setBaseURI(string memory _newBaseURI) public onlyOwner {
