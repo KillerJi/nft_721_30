@@ -3,13 +3,13 @@
 
 pragma solidity ^0.8.0;
 
-import "./nft/IERC721.sol";
-import "./nft/IERC721Receiver.sol";
-import "./nft/IERC721Metadata.sol";
-import "./nft/Address.sol";
-import "./nft/Context.sol";
-import "./nft/Strings.sol";
-import "./nft/ERC165.sol";
+import "./interface/IERC721.sol";
+import "./interface/IERC721Receiver.sol";
+import "./interface/IERC721Metadata.sol";
+import "./interface/Address.sol";
+import "./interface/Context.sol";
+import "./interface/Strings.sol";
+import "./interface/ERC165.sol";
 
 /**
  * @dev Implementation of https://eips.ethereum.org/EIPS/eip-721[ERC721] Non-Fungible Token Standard, including
@@ -356,7 +356,6 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     function _mint(address to, uint256 tokenId) internal virtual {
         require(to != address(0), "ERC721: mint to the zero address");
         require(!_exists(tokenId), "ERC721: token already minted");
-        _checkLock(tokenId);
         _beforeTokenTransfer(address(0), to, tokenId);
 
         _balances[to] += 1;
@@ -379,7 +378,6 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
      */
     function _burn(uint256 tokenId) internal virtual {
         address owner = ERC721.ownerOf(tokenId);
-        _checkLock(tokenId);
         _beforeTokenTransfer(owner, address(0), tokenId);
 
         // Clear approvals
@@ -414,7 +412,6 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
             "ERC721: transfer from incorrect owner"
         );
         require(to != address(0), "ERC721: transfer to the zero address");
-        _checkLock(tokenId);
         _beforeTokenTransfer(from, to, tokenId);
 
         // Clear approvals from the previous owner
@@ -532,8 +529,4 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         address to,
         uint256 tokenId
     ) internal virtual {}
-
-    function _checkLock(uint256 tokenId) internal view {
-        require(nftLock[tokenId] == false, "Nft lock by owner");
-    }
 }

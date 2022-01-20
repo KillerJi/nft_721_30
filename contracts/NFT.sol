@@ -10,14 +10,14 @@ contract NFT is ERC721, Ownable {
     using Strings for uint256;
     string public baseExtension = ".json";
     string public baseURI;
-    string _initBaseURI = "https://metadata.x-protocol.com/xma/";
-    uint256 public constant total = 30;
+    string _initBaseURI = "https://metadata.x-protocol.com/csfc/";
+    uint256 public constant total = 100;
     Counters.Counter private currentTokenId;
     mapping(uint256 => string) private _tokenURIs;
 
-    constructor() ERC721("X-Metaverse Avatar", "XMA") {
+    constructor() ERC721("Chinese Spring Festival", "CSFC") {
         setBaseURI(_initBaseURI);
-        for (uint256 i = 0; i < 30; i++) {
+        for (uint256 i = 0; i < 100; i++) {
             _mint(msg.sender);
         }
     }
@@ -28,21 +28,6 @@ contract NFT is ERC721, Ownable {
         uint256 newItemId = currentTokenId.current();
         _safeMint(recipient, newItemId);
         return newItemId;
-    }
-
-    function lock(uint256 tokenId) public {
-        require(_checkNftOwner(tokenId), "Not Nft Owner");
-        nftLock[tokenId] = true;
-    }
-
-    function unlock(uint256 tokenId) public {
-        require(_checkNftOwner(tokenId), "Not Nft Owner");
-        nftLock[tokenId] = false;
-    }
-
-    function _checkNftOwner(uint256 tokenId) internal view returns (bool) {
-        address owner = ERC721.ownerOf(tokenId);
-        return owner == msg.sender;
     }
 
     function setBaseURI(string memory _newBaseURI) public onlyOwner {
